@@ -1,12 +1,12 @@
 #include <uv.h>
-#include "writer.h"
+#include <mutex>
+#include "write.h"
 
 namespace film { namespace client {
 
-Writer::Writer() {}
-Writer::~Writer() {}
+void write(Message message) {
+  static std::mutex mutex;
 
-void Writer::write(Message message) {
   uv_buf_t* buf = new uv_buf_t();
   buf->len = message.data.size() + 1;
   buf->base = new char[buf->len];
@@ -16,9 +16,9 @@ void Writer::write(Message message) {
   req->handle = message.handle;
 
   struct BufMutex { uv_buf_t* buf; std::mutex* mutex; };
-  req->data = (void*) new BufMutex({ .buf = buf, .mutex = &write_mutex });
+  req->data = (void*) new BufMutex({ .buf = buf, .mutex = &mutex });
 
-  write_mutex.lock();
+  mutex.lock();
   uv_write(req, req->handle, buf, 1,
     [](uv_write_t* req, int status) -> void {
       if(req && req->data) {

@@ -1,4 +1,6 @@
 #include "client.h"
+#include "write.h"
+#include "message.h"
 
 namespace film { namespace client {
 
@@ -32,9 +34,7 @@ void Client::connection_cb(uv_connect_t* connection, int status)
     {.base = "world", .len = 5}
   };
 
-  uv_write_t request;
-
-  uv_write(&request, stream, buffer, 2, write_cb);
+  write({ .handle = stream, .data = "this is a test" });
   uv_read_start(stream, alloc_cb, read_cb);
 }
 
