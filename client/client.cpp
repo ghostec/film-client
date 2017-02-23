@@ -20,7 +20,7 @@ int Client::connect() {
   uv_connect_t connect;
   uv_tcp_connect(&connect, &socket, (const struct sockaddr*) &dest, connection_cb);
 
-  uv_run(loop, UV_RUN_DEFAULT);
+  return uv_run(loop, UV_RUN_DEFAULT);
 }
 
 void Client::connection_cb(uv_connect_t* connection, int status)

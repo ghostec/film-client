@@ -1,5 +1,6 @@
 #include <uv.h>
 #include <mutex>
+#include <cstring>
 #include "write.h"
 
 namespace film { namespace client {
@@ -8,9 +9,9 @@ void write(Message message) {
   static std::mutex mutex;
 
   uv_buf_t* buf = new uv_buf_t();
-  buf->len = message.data.size() + 1;
+  buf->len = strlen(message.data);
   buf->base = new char[buf->len];
-  memcpy(buf->base, &message.data[0], buf->len);
+  memcpy(buf->base, message.data, buf->len);
 
   uv_write_t* req = new uv_write_t();
   req->handle = message.handle;
