@@ -1,0 +1,6 @@
+/Users/ghostec/code/film-client/build/CMakeFiles/rebuild_cache.dir
+/Users/ghostec/code/film-client/build/CMakeFiles/edit_cache.dir
+/Users/ghostec/code/film-client/build/CMakeFiles/film_client.dir
+/Users/ghostec/code/film-client/build/client/CMakeFiles/rebuild_cache.dir
+/Users/ghostec/code/film-client/build/client/CMakeFiles/edit_cache.dir
+/Users/ghostec/code/film-client/build/client/CMakeFiles/Client.dir
