@@ -1,6 +1,8 @@
 #include <uv.h>
+#include <uv_msg_framing.h>
 #include <mutex>
 #include <cstring>
+#include <cstdio>
 #include "write.h"
 
 namespace film { namespace client {
@@ -9,18 +11,20 @@ void write(Message message) {
   static std::mutex mutex;
 
   uv_buf_t* buf = new uv_buf_t();
-  buf->len = strlen(message.data);
-  buf->base = new char[buf->len];
+  buf->len = message.length;
+  buf->base = new char[buf->len + 1];
   memcpy(buf->base, message.data, buf->len);
 
-  uv_write_t* req = new uv_write_t();
-  req->handle = message.handle;
-
   struct BufMutex { uv_buf_t* buf; std::mutex* mutex; };
-  req->data = (void*) new BufMutex({ .buf = buf, .mutex = &mutex });
+  uv_write_t req;
+  req.handle = message.handle;
+  req.data = (void*) new BufMutex({ .buf = buf, .mutex = &mutex });
+
+  uv_msg_write_t* msg_req = new uv_msg_write_t();
+  msg_req->req = req;
 
   mutex.lock();
-  uv_write(req, req->handle, buf, 1,
+  uv_msg_send(msg_req, msg_req->req.handle, buf->base, buf->len,
     [](uv_write_t* req, int status) -> void {
       if(req && req->data) {
         auto helper = (BufMutex*) req->data;

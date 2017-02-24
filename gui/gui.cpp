@@ -18,6 +18,7 @@ GUI::GUI() {
 GUI::~GUI() {}
 
 void GUI::update_image(client::Message message) {
+  std::cout << message.data << std::endl;
   auto image = QImage::fromData((const unsigned char*) message.data, strlen(message.data));
   auto scaled = image.scaled(800, 600,
       Qt::KeepAspectRatio, Qt::SmoothTransformation);

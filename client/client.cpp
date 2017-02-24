@@ -1,3 +1,7 @@
+#include <uv_msg_framing.h>
+#include <string>
+#include <sstream>
+#include <iostream>
 #include "client.h"
 #include "write.h"
 #include "message.h"
@@ -10,15 +14,16 @@ Client::~Client() {}
 int Client::connect() {
   auto loop = uv_default_loop();
 
-  uv_tcp_t socket;
-  uv_tcp_init(loop, &socket);
-  uv_tcp_keepalive(&socket, 1, 60);
+  uv_msg_t socket;
+  uv_msg_init(loop, &socket, UV_TCP);
+  uv_tcp_keepalive((uv_tcp_t*) &socket, 1, 60);
 
   sockaddr_in dest;
   uv_ip4_addr("0.0.0.0", 3000, &dest);
 
   uv_connect_t connect;
-  uv_tcp_connect(&connect, &socket, (const struct sockaddr*) &dest, connection_cb);
+  connect.data = this;
+  uv_tcp_connect(&connect, (uv_tcp_t*) &socket, (const struct sockaddr*) &dest, connection_cb);
 
   return uv_run(loop, UV_RUN_DEFAULT);
 }
@@ -48,35 +53,30 @@ void Client::notify_observers(Message message) {
   }
 }
 
+void Client::delete_buf_cb(uv_handle_t* handle, void* ptr) {
+   delete ptr;
+}
+
+void Client::msg_read_cb(uv_stream_t *handle, void *msg, int size) {
+  if (size <= 0) return;
+
+  printf("new message here (%d bytes): %s\n", size, (char*)msg);
+  auto data = new char[size + 1];
+  memcpy(data, (char*) msg, size);
+  ((Client*)handle->data)->notify_observers({
+    .handle = handle, .data = (char*) msg, .length = (size_t) size
+  });
+}
+
 void Client::connection_cb(uv_connect_t* connection, int status)
 {
   printf("connected.\n");
 
   uv_stream_t* stream = connection->handle;
+  stream->data = connection->data;
 
-  uv_buf_t buffer[] = {
-    {.base = "hello", .len = 5},
-    {.base = "world", .len = 5}
-  };
-
-  write({ .handle = stream, .data = "this is a test" });
-  uv_read_start(stream, alloc_cb, read_cb);
-}
-
-void Client::read_cb(uv_stream_t* tcp, ssize_t nread, const uv_buf_t* buf)
-{
-  if(nread >= 0) {
-    //printf("read: %s\n", tcp->data);
-    printf("read: %s\n", buf->base);
-  }
-  else {
-    //we got an EOF
-    uv_close((uv_handle_t*)tcp, close_cb);
-  }
-
-  //cargo-culted
-  delete buf->base;
-  //delete buf;
+  write({ .handle = stream, .data = "this is a test", .length = 15 });
+  uv_msg_read_start((uv_msg_t*) stream, alloc_cb, msg_read_cb, delete_buf_cb);
 }
 
 void Client::alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
@@ -87,16 +87,5 @@ void Client::close_cb(uv_handle_t* handle)
 {
   printf("closed.");
 }
-
-void Client::write_cb(uv_write_t* req, int status)
-{
-  if (status) {
-    fprintf(stderr, "uv_write error: %s\n", uv_strerror(status));
-    return;
-  }
-  printf("wrote.\n");
-  //uv_close((uv_handle_t*)req->handle, on_close);
-}
-
 
 } }
