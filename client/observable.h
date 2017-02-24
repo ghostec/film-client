@@ -2,21 +2,18 @@
 #define CLIENT_OBSERVABLEH
 
 #include <vector>
-#include <functional>
-#include "message.h"
 
 namespace film { namespace client {
 
-typedef std::function<void(Message message)> Observer;
-
+template<typename O, typename M>
 class Observable {
 public:
-  Observable();
-  ~Observable();
-  void register_observer(Observer observer);
-  void notify_observers(Message message);
-private:
-  std::vector<Observer> observers;
+  Observable() {}
+  ~Observable() {}
+  void register_observer(O observer) { observers.push_back(observer); }
+  virtual void notify_observers(M message) = 0;
+protected:
+  std::vector<O> observers;
 };
 
 } }

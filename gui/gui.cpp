@@ -26,6 +26,8 @@ void GUI::update_image(client::Message message) {
   pixmap_item = new QGraphicsPixmapItem(QPixmap::fromImage(scaled));
   scene->removeItem(ref);
   delete ref;
+
+  show();
 }
 
 void GUI::show() {

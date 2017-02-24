@@ -23,6 +23,31 @@ int Client::connect() {
   return uv_run(loop, UV_RUN_DEFAULT);
 }
 
+void Client::notify_observers(Message message) {
+  auto loop = uv_default_loop();
+
+  struct ObserverMessage { Observer observer; Message message; };
+
+  for(const auto& observer : observers) {
+    uv_work_t* req = new uv_work_t();
+
+    req->data = (void*) new ObserverMessage {
+      .observer = observer,
+      .message = message
+    };
+
+    uv_queue_work(loop, req,
+      [](uv_work_t* req) -> void {
+        auto om = (ObserverMessage*) req->data;
+        om->observer(om->message);
+      },
+      [](uv_work_t* req, int status) -> void {
+        delete (ObserverMessage*) req->data;
+        delete req;
+    });
+  }
+}
+
 void Client::connection_cb(uv_connect_t* connection, int status)
 {
   printf("connected.\n");

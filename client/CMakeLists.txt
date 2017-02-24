@@ -1,6 +1,6 @@
 project(Client)
 
-set(ClientFiles client.cpp observable.cpp write.cpp)
+set(ClientFiles client.cpp write.cpp)
 
 add_library(Client ${ClientFiles})
 
