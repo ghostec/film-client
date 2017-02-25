@@ -61,7 +61,7 @@ void Client::msg_read_cb(uv_stream_t *handle, void *msg, int size) {
   if (size <= 0) return;
 
   printf("new message here (%d bytes): %s\n", size, (char*)msg);
-  auto data = new char[size + 1];
+  auto data = new char[size];
   memcpy(data, (char*) msg, size);
   ((Client*)handle->data)->notify_observers({
     .handle = handle, .data = (char*) msg, .length = (size_t) size

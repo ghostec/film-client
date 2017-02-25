@@ -1,19 +1,20 @@
 #ifndef GUI_GUIH
 #define GUI_GUIH
 
+#include <QObject>
+#include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGraphicsPixmapItem>
-#include "client/message.h"
 
 namespace film { namespace gui {
 
-class GUI {
+class GUI : public QObject {
+  Q_OBJECT
 public:
   GUI();
   ~GUI();
-  void show();
-  void update_image(client::Message message);
+public slots:
+  void set_pixmap_item(QGraphicsPixmapItem* pixmap_item);
 private:
   QGraphicsPixmapItem* pixmap_item;
   QGraphicsScene* scene;
