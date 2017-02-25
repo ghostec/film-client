@@ -4,7 +4,7 @@
 
 namespace film { namespace gui {
 
-void Worker::update_image(client::Message message) {
+void Worker::update_image(network::Message message) {
   std::cout << message.length << std::endl;
   auto image = QImage::fromData((const unsigned char*) message.data, message.length, "JPEG");
   auto scaled = image.scaled(800, 600,

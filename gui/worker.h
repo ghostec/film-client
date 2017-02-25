@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
-#include "client/message.h"
+#include "film-network/message.h"
 
 namespace film { namespace gui {
 
@@ -12,7 +12,7 @@ class Worker : public QObject {
 public:
   Worker() {}
   ~Worker() {}
-  void update_image(client::Message message);
+  void update_image(network::Message message);
 signals:
   void set_pixmap_item(QGraphicsPixmapItem* pixmap_item);
 };

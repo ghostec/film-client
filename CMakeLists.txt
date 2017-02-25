@@ -3,12 +3,12 @@ project(film_client)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(./)
+include_directories(./ ./deps)
 
-add_subdirectory(client)
+add_subdirectory(./deps/film-network)
 add_subdirectory(gui)
 
-set(LIBRARIES Client GUI)
+set(LIBRARIES Film_Network GUI)
 
 add_executable(film_client main.cpp)
 
