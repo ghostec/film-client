@@ -51,7 +51,7 @@ void Server::connection_cb(uv_stream_t *server, int status) {
     write({
       .handle = (uv_stream_t*) client,
       .data = CONNECTED_MESSAGE,
-      .length = strlen(CONNECTED_MESSAGE)
+      .length = strlen(CONNECTED_MESSAGE) + 1
     });
   }
   else {
