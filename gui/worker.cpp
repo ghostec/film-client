@@ -5,13 +5,13 @@
 namespace film { namespace gui {
 
 void Worker::update_image(network::Message message) {
-  std::cout << message.length << std::endl;
-  auto image = QImage::fromData((const unsigned char*) message.data, message.length, "JPEG");
-  auto scaled = image.scaled(800, 600,
-      Qt::KeepAspectRatio, Qt::SmoothTransformation);
-  auto pixmap_item = new QGraphicsPixmapItem(QPixmap::fromImage(scaled));
+  std::cout << message.data << std::endl;
+  //auto image = QImage::fromData((const unsigned char*) message.data, message.length, "JPEG");
+  //auto scaled = image.scaled(800, 600,
+  //    Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  //auto pixmap_item = new QGraphicsPixmapItem(QPixmap::fromImage(scaled));
 
-  emit set_pixmap_item(pixmap_item);
+  //emit set_pixmap_item(pixmap_item);
 }
 
 } }
