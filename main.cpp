@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <iostream>
+#include "network/constants.h"
 #include "film-network/write.h"
 #include "film-network/client.h"
 #include "gui/gui.h"
@@ -16,8 +17,8 @@ int main(int argc, char **argv) {
   client.set_inner_connection_cb([](uv_stream_t* handle) {
     film::network::write({
       .handle = handle,
-      .data = "CLIENT",
-      .length = strlen("CLIENT") + 1
+      .data = film::network::REGISTER_CLIENT_MESSAGE,
+      .length = strlen(film::network::REGISTER_CLIENT_MESSAGE) + 1
     });
   });
 
