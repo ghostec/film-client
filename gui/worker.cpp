@@ -12,9 +12,9 @@ void Worker::update_image(network::Message message) {
   if(msg != network::FRAME_MESSAGE) return;
 
   auto image = QImage::fromData((const unsigned char*) message.data + msg.size() + 1, message.length - msg.size() - 1, "JPEG");
-  auto scaled = image.scaled(800, 600,
-      Qt::KeepAspectRatio, Qt::SmoothTransformation);
-  auto pixmap_item = new QGraphicsPixmapItem(QPixmap::fromImage(scaled));
+  //auto scaled = image.scaled(800, 600,
+  //    Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  auto pixmap_item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
 
   emit set_pixmap_item(pixmap_item);
 }
